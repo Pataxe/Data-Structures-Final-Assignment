@@ -12,9 +12,11 @@ class Node:
 		self.number = station_number
 		#AKA the station name 
 		self.name = station_name
-		#
 		#dictionary/array to store node adjacancies & weights-> need a method to add to this
 		self.adjacentNodes = {}
+
+	def getPathWeight(self, node_number):
+		return self.adjacentNodes[node_number]
 
 	def addAdjacentNode(self, adjNode, weight):
 		self.adjacentNodes[adjNode] = weight
@@ -32,13 +34,8 @@ class Graph:
 	def __init__(self):
 		self.nodeList = {}
 		self.nodeCount = 0
+		self.schedule=[]
 
-	def __iter__(self):
-		return  iter(self.nodeList.values())
-    	#return iter(self.nodeList.values())
-    	#return x
-
-	#def add_Node(self, s_name, n_number, arr_time, depart_time):
 	def add_Node(self, s_name, n_number):
 		new_node = Node(s_name, n_number)
 		#print(new_node.get_Name())
@@ -52,9 +49,55 @@ class Graph:
 		#wighted directional graph, no need to add inverse 
 		self.nodeList[startNode].addAdjacentNode(self.nodeList[endNode], weight)
 
+	def set_schedule(self, startNode, endNode, departTime, arrTime):
+		#declare a temp dictionary to store the schedule entry in 
+		temp_dict = {}
+		#this will create a dictionary that is in the format of {depart_station:number, arr_station:number, depart_time:time, arr_time:time}
+		temp_dict['d_station'] = startNode
+		temp_dict['a_station'] = endNode
+		temp_dict['d_time'] = departTime
+		temp_dict['a_time'] = arrTime
+		#add the dictionary to the list
+		self.schedule.append(temp_dict)
+		#to access the list use self.schedule[]
+
+def printSchedule(train_sched):
+	print('Full Train Schedule')
+	for item in train_sched.schedule:
+		print("Departure to " + train_sched.nodeList[item.get('a_station')].get_Name() + ' at ' + item.get('d_time') + ', arriving at ' + item.get('a_time'))
+	print('\n')
+
+def printStationSchedule(train_sched):
+	stationID = input("Enter the station ID: ")
+	print("Schedule for " + train_sched.nodeList[stationID].get_Name() + ":")
+	for item in train_sched.schedule:
+		if item.get('d_station') == stationID:
+			print("Departure to " + train_sched.nodeList[item.get('a_station')].get_Name() + ' at ' + item.get('d_time') + ', arriving at ' + item.get('a_time'))		
+	print('\n')
+
+def getStationName(train_sched):
+	s_number = input('Enter the station number: ')
+	if train_sched.nodeList[s_number]:
+		print(train_sched.nodeList[s_number].get_Name())
+		return None                                             #return none to exit the if statement
+	print('Station #{} not found'.format(s_number))
+
+def getStationID(train_sched):
+	s_name = input('Enter the station name: ')
+	for d_item in train_sched.nodeList:                                        #loop through the node list for each node 
+		if s_name.lower() in train_sched.nodeList[d_item].get_Name().lower():  #use the lower case to normalize getting the name from the nodelist
+			print(train_sched.nodeList[d_item].get_Name() + ' is Station number '  + str(train_sched.nodeList[d_item].get_Number())) 
+			return None				#return none to exit the if statement
+	print('Station {} not found'.format(s_name))
+	#print('ran getStationID')
+
+def serviceAvailable(train_sched):
+	print('ran service available')
+
+def nonstopService(train_sched):
+	print('ran nonstop service')
 
 def main():
-	
 	#declare variables
 	trains_list = 'trains.dat'
 	station_list = 'stations.dat'
@@ -82,19 +125,63 @@ def main():
 			if train:  #make sure that any blank lines or line breaks are handled correctly
 				dep_train, ar_train, dep_time, arr_time = train.split()
 			trainSchedule.set_Edge(dep_train, ar_train, dep_time, arr_time)
+			trainSchedule.set_schedule(dep_train, ar_train, dep_time, arr_time)
 	#print("train nodes = {}".format(trainSchedule.nodeCount))
 	#print(trainSchedule.nodeList)
 
+	#initialize user selection otherwise it errors out because of 
+	user_selection=''
+	#prnt the menu
+	
+	print('\n')
+	print("========================================================================")
+	print("                    READING RAILWAYS SCHEDULER")
+	print("========================================================================")
+	print("Options - (Enter the number of your selected option)")
+	print("(1) - Print full schedule")
+	print("(2) - Print station schedule")
+	print("(3) - Look up stationd id")
+	print("(4) - Look up station name")
+	print("(5) - Service available")
+	print("(6) - Nonstop service available")
+	print("(7) - Find route (Shortest riding time)")
+	print("(8) - Find route (Shortest overall travel time)")
+	print("(9) - Exit")
+
+	while user_selection != 9:
+		#get the user's selection
+		try:
+			user_selection = int(input("Enter Option: "))
+		except:
+			print('Please enter a number')
+
+		#call the function based on the user input
+		if user_selection == 1:
+			printSchedule(trainSchedule)
+		elif user_selection == 2:
+			printStationSchedule(trainSchedule)
+		elif user_selection == 3:
+			getStationID(trainSchedule)
+		elif user_selection == 4:
+			getStationName(trainSchedule)
+		elif user_selection == 5:
+			serviceAvailable(trainSchedule)
+		elif user_selection == 6:
+			nonstopService(trainSchedule)
+		elif user_selection == 7:
+			print('need ')
+		elif user_selection == 8:
+			print('need')
+		elif user_selection == 9:
+			print('Goodbye!')
+			sys.exit()
+		else:
+			print('Invalid selection, please try again')
+
+	#this just prints out the things below for troubleshooting
 	for item in trainSchedule:
 		print(item.get_Name()) #prints out the name of the node, ie Brooks, etc
 		print(item.adjacentNodes)
-
-
-
-
-
-
-
 
 
 
@@ -104,6 +191,7 @@ if __name__ == "__main__":
 	# args = parser.parse_args()
 	# input_file = args.f
 	main()
+
 
 
 
