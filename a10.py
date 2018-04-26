@@ -30,13 +30,7 @@ class Node:
 	
 	def getAdjacentNodesList(self):
 		return self.adjacentNodes
-	#def get_adjacentNode(self, node):
-		#if self.adjacentNodes[node]:
-			#return self.adjacentNodes[node]
 
-
-
-	#def add
 
 class Graph:
 	def __init__(self):
