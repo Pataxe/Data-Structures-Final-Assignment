@@ -16,7 +16,8 @@ class Node:
 		self.adjacentNodes = {}
 
 	def getPathWeight(self, node_number):
-		return self.adjacentNodes[node_number]
+		if node_number in self.adjacentNodes:
+			return self.adjacentNodes[node_number]
 
 	def addAdjacentNode(self, adjNode, weight):
 		self.adjacentNodes[adjNode] = weight
@@ -26,7 +27,14 @@ class Node:
 
 	def get_Number(self):
 		return self.number
-	#def add_path():
+	
+	def getAdjacentNodesList(self):
+		return self.adjacentNodes
+	#def get_adjacentNode(self, node):
+		#if self.adjacentNodes[node]:
+			#return self.adjacentNodes[node]
+
+
 
 	#def add
 
@@ -48,6 +56,7 @@ class Graph:
 		#assume that the nodes exist, skipping input validation
 		#wighted directional graph, no need to add inverse 
 		self.nodeList[startNode].addAdjacentNode(self.nodeList[endNode], weight)
+		#print(self.nodeList[startNode].adjacentNodes)
 
 	def set_schedule(self, startNode, endNode, departTime, arrTime):
 		#declare a temp dictionary to store the schedule entry in 
@@ -60,6 +69,56 @@ class Graph:
 		#add the dictionary to the list
 		self.schedule.append(temp_dict)
 		#to access the list use self.schedule[]
+
+	def getNodeCount(self):
+		#return self.nodeCount
+		return len(self.nodeList)
+
+def dijkstra(train_sched, source):
+	#ADAPTED THIS FROM MY LAST ASSIGNMENT
+	#array to hold finalized value
+	finalized = []
+	#array to track weights from source to all other nodes - holds actual costs
+	#weights = []
+	#array to hold distances
+	distance = [train_sched.getNodeCount()]
+	#array to hold the visited nodes
+	visited = []
+	#visited = [train_sched.getNodeCount()]
+	#python lists can act as a stack with the append and pop list methods
+	stack = []
+	#value to fill in array with
+	dist_val = float('inf')
+	# i cant remember what this variable is for, will update when I do
+	v = 0
+
+	#create a matrix from the graph because I cannot figure out how to implement Dijkstra for a list
+	matrix_bounds = train_sched.getNodeCount() + 1 #because of the array starting at zero
+	matrix = [[0 for x in range(matrix_bounds)] for y in range(matrix_bounds)] 
+	#add the values to the matrix
+	for i in train_sched.nodeList:
+		nlist = train_sched.nodeList[i].getAdjacentNodesList()
+		for key, value in nlist.items():
+			matrix[int(i)][int(key.get_Number())]= int(value)
+
+
+
+	#initialize the visited array & create the distance array from the matrix
+	ctr = 0
+	while ctr < train_sched.getNodeCount(): #0 for false and 1 for true
+		visited.append(0)
+		distance.append(matrix[source][ctr+1]) 
+		ctr+=1
+
+	#create the distance array from the adjacency array
+	for j in distance:
+		print(j)
+		#distance[j] = 0  #just for debugging
+		#distance[j] = matrix[0][i]; 
+	
+	distance[0] = 0
+	visited[source] = 1
+
 
 def printSchedule(train_sched):
 	print('Full Train Schedule')
@@ -171,7 +230,8 @@ def main():
 		elif user_selection == 7:
 			print('need ')
 		elif user_selection == 8:
-			print('need')
+			dijkstra(trainSchedule, 3)
+			#print('need')
 		elif user_selection == 9:
 			print('Goodbye!')
 			sys.exit()
@@ -194,26 +254,28 @@ if __name__ == "__main__":
 
 
 
+			#print(matrix[row][val])
+			#print(str(i) + ' ' + str(key.get_Number()) + ' ' +  str(value))
+		#print(train_sched.nodeList[i].getAdjacentNodesList())
+		#ctr = 1
+		#while ctr < (train_sched.getNodeCount() + 1):
+			#print('I: ' + str(i) + ' node: ' + str(ctr))
+			#ctr+=1
 
 
+			#print(train_sched.nodeList[i].getPathWeight(node))
+			#ctr+=1
+		#print(train_sched.nodeList[i].getPathWeight(i))
+		#print(train_sched.nodeList[i].get_adjacentNode(i))
+		#for key in i.adjacentNodes:
+			#print (i[key])
+		#for node in  i.adjacentNodes:
+			#print(node)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		
+		#def getPathWeight(self, node_number):
+		#return self.adjacentNodes[node_number]
 
 
 	# try:
@@ -224,3 +286,7 @@ if __name__ == "__main__":
  #        #logger.critical('No such file - ' + input_file )
  #        exit()
 
+	# for row in matrix:
+	# 	print(row)
+	#  	for val in row:
+	#  		print(val)
