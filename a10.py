@@ -95,8 +95,6 @@ def dijkstra(train_sched, source):
 		for key, value in nlist.items():
 			matrix[int(i)][int(key.get_Number())]= int(value)
 
-
-
 	#initialize the visited array & create the distance array from the matrix
 	ctr = 0
 	while ctr < train_sched.getNodeCount(): #0 for false and 1 for true
