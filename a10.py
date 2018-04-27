@@ -146,7 +146,20 @@ def serviceAvailable(train_sched):
 	print('ran service available')
 
 def nonstopService(train_sched):
-	print('ran nonstop service')
+	#get the station numbers, make sure there is an actual number
+	try:
+		start = input("Please enter the number of the departure station: ")
+		end_s = input("Please enter the number of the destination station: ")
+	except:
+		print('Not a valid selection, please enter a number')
+	#loop through and look for the schedule
+	for item in train_sched.schedule:
+		if item['d_station'] == start and item['a_station'] == end_s:
+			s_name = train_sched.nodeList[item.get('d_station')].get_Name()
+			print(s_name)
+			print('There is non-stop service available from ' + train_sched.nodeList[item.get('d_station')].get_Name() + ' Station to  ' + train_sched.nodeList[item.get('a_station')].get_Name() + ' Station ')
+			return
+	print('There is no non-stop service available')
 
 def main():
 	#declare variables
