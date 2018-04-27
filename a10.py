@@ -65,8 +65,8 @@ class Graph:
 		#to access the list use self.schedule[]
 
 	def getNodeCount(self):
-		#return self.nodeCount
-		return len(self.nodeList)
+		return self.nodeCount
+		#return len(self.nodeList)
 
 def dijkstra(train_sched, source):
 	#ADAPTED THIS FROM MY LAST ASSIGNMENT
@@ -75,7 +75,7 @@ def dijkstra(train_sched, source):
 	#array to track weights from source to all other nodes - holds actual costs
 	#weights = []
 	#array to hold distances
-	distance = [train_sched.getNodeCount()]
+	distance = []
 	#array to hold the visited nodes
 	visited = []
 	#visited = [train_sched.getNodeCount()]
@@ -88,29 +88,56 @@ def dijkstra(train_sched, source):
 
 	#create a matrix from the graph because I cannot figure out how to implement Dijkstra for a list
 	matrix_bounds = train_sched.getNodeCount() + 1 #because of the array starting at zero
-	matrix = [[0 for x in range(matrix_bounds)] for y in range(matrix_bounds)] 
+	matrix = [[dist_val for x in range(matrix_bounds)] for y in range(matrix_bounds)] 
 	#add the values to the matrix
 	for i in train_sched.nodeList:
 		nlist = train_sched.nodeList[i].getAdjacentNodesList()
 		for key, value in nlist.items():
 			matrix[int(i)][int(key.get_Number())]= int(value)
+	#print the matrix for troubleshooting		
+	# for row in matrix:
+ # 		print(row)
+ # 		for r in row:
+ # 			print(r)
+  	#print('edn')
 
 	#initialize the visited array & create the distance array from the matrix
 	ctr = 0
-	while ctr < train_sched.getNodeCount(): #0 for false and 1 for true
+	while ctr < train_sched.getNodeCount()+1: #0 for false and 1 for true
+		#print('CTR ' + str(ctr) )
 		visited.append(0)
-		distance.append(matrix[source][ctr+1]) 
+		distance.append(matrix[source][ctr]) 
 		ctr+=1
 
-	#create the distance array from the adjacency array
-	for j in distance:
-		print(j)
-		#distance[j] = 0  #just for debugging
-		#distance[j] = matrix[0][i]; 
-	
-	distance[0] = 0
 	visited[source] = 1
 
+	i = 0
+	while i < train_sched.getNodeCount()+1:
+		x = 0
+		while x < train_sched.getNodeCount()+1:
+			min = dist_val
+			if visited[x] == 0:
+				if distance[x] < min:
+					#print(distance[x])
+					min = distance[x]
+					v = x
+			x+=1
+		if visited[v] == 0:
+			visited[v] = 1
+			w=0
+			while w <  train_sched.getNodeCount()+1:
+				if matrix[v][w] != dist_val: #adjacency exists
+					if distance[w] == dist_val: #distance not calculated
+						distance[w] = min + matrix[v][w]
+					elif distance[w] > (distance[v]+matrix[v][w]):
+						distance[w] = min + matrix[v][w]
+				w+=1
+		i+=1
+	#print out the results
+	z=1
+	while z < train_sched.getNodeCount()+1:
+		print(str(source) + ' -> ' + str(z) + ' / ' + str(distance[z]))
+		z+=1
 
 def printSchedule(train_sched):
 	print('Full Train Schedule')
@@ -295,3 +322,11 @@ if __name__ == "__main__":
 	# 	print(row)
 	#  	for val in row:
 	#  		print(val)
+				#print(distance[x])
+		#print(train_sched.getNodeCount())
+		#print(distance[x])
+		#print('x: ' + str(x))
+		#if visited[x] == 0:
+		#print(distance[x])
+			#if distance[x] < min:
+				#print(distance[x])
